@@ -3217,6 +3217,8 @@ input::-moz-focus-inner {
 }
 
 .bricks-wrapper .entry__thumb {
+  width: 100%;
+  height: 260px; /* set any fixed height you want */
   overflow: hidden;
   position: relative;
 }
@@ -3226,6 +3228,10 @@ input::-moz-focus-inner {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
   margin: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* <-- key! */
+  object-position: center;
 }
 
 .bricks-wrapper .entry__thumb .thumb-link::before {
@@ -3289,6 +3295,15 @@ input::-moz-focus-inner {
 .bricks-wrapper .entry__text {
   padding: 2.4rem 2.8rem 3.6rem;
   background-color: white;
+  width: 100%;
+    transition: height 0.35s ease;
+flex-direction: column;
+  position: relative;
+    overflow: hidden;
+
+  height: 300px;  
+   display: flex;
+  flex-direction: column;
 }
 
 .bricks-wrapper .entry__title {
@@ -3327,10 +3342,33 @@ input::-moz-focus-inner {
   font-size: 1.5rem;
   line-height: 1.733;
   color: var(--color-text-light);
-}
+ }
 
 .bricks-wrapper .entry__excerpt p {
   margin-bottom: 0;
+   display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.entry__text.expanded .entry__excerpt p{
+    -webkit-line-clamp: unset;
+
+}
+.expand-btn {
+  margin-top: auto;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  color: #555;
+  cursor: pointer;
+  text-align: left;
+  padding: 6px 0;
+}
+
+.expand-btn:hover {
+   text-decoration: underline;
 }
 
 /* featured post slider 
@@ -5259,5 +5297,56 @@ body.search-is-visible {
   }
   .comment-respond form {
     padding-top: var(--vspace-1);
+  }
+}
+
+.about-text-section {
+  max-width: 520px;
+  margin-left: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-title {
+  font-size: 3.4rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.about-paragraph {
+  font-size: 1.8rem;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media screen and (max-width: 900px) {
+  .bricks-wrapper.h-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .about-text-section {
+    margin-left: 0;
+    margin-top: 30px;
+    padding: 0 20px;
+    max-width: 100%;
+  }
+
+  .about-title {
+    font-size: 2.6rem;
+  }
+
+  .about-paragraph {
+    font-size: 1.6rem;
   }
 }

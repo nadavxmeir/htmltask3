@@ -328,6 +328,49 @@
     });
   }; // end ssBackToTop
 
+  document.querySelectorAll(".entry__text").forEach((card) => {
+    const excerpt = card.querySelector(".entry__excerpt p");
+    const btn = card.querySelector(".expand-btn");
+
+    // clamp initially
+    excerpt.style.display = "-webkit-box";
+    excerpt.style.webkitLineClamp = "5";
+    excerpt.style.webkitBoxOrient = "vertical";
+
+    // store the collapsed height
+    const collapsedHeight = card.scrollHeight;
+
+    btn.addEventListener("click", () => {
+      if (!card.classList.contains("expanded")) {
+        // measure expanded height
+        excerpt.style.webkitLineClamp = "unset";
+        const fullHeight = card.scrollHeight;
+
+        // collapse back for animation start
+        excerpt.style.webkitLineClamp = "5";
+        card.style.height = card.offsetHeight + "px";
+
+        // expand
+        requestAnimationFrame(() => {
+          card.classList.add("expanded");
+          excerpt.style.webkitLineClamp = "unset";
+          card.style.height = fullHeight + "px";
+          btn.textContent = "Show less";
+        });
+      } else {
+        // collapse back
+        card.style.height = card.offsetHeight + "px";
+
+        requestAnimationFrame(() => {
+          card.classList.remove("expanded");
+          excerpt.style.webkitLineClamp = "5";
+          card.style.height = collapsedHeight + "px";
+          btn.textContent = "Read more…";
+        });
+      }
+    });
+  });
+
   /* Initialize
    * ------------------------------------------------------ */
   (function ssInit() {
