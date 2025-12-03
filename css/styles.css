@@ -3296,13 +3296,13 @@ input::-moz-focus-inner {
   padding: 2.4rem 2.8rem 3.6rem;
   background-color: white;
   width: 100%;
-    transition: height 0.35s ease;
-flex-direction: column;
+  transition: height 0.35s ease;
+  flex-direction: column;
   position: relative;
-    overflow: hidden;
+  overflow: hidden;
 
-  height: 300px;  
-   display: flex;
+  height: 300px;
+  display: flex;
   flex-direction: column;
 }
 
@@ -3342,35 +3342,34 @@ flex-direction: column;
   font-size: 1.5rem;
   line-height: 1.733;
   color: var(--color-text-light);
- }
+}
 
 .bricks-wrapper .entry__excerpt p {
   margin-bottom: 0;
-   display: -webkit-box;
+  display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: all 0.2s ease;
 }
-.entry__text.expanded .entry__excerpt p{
-    -webkit-line-clamp: unset;
-
+.entry__text.expanded .entry__excerpt p {
+  -webkit-line-clamp: unset;
 }
 .expand-btn {
-  margin-top: auto;
-  border: none;
-  background: none;
-  font-size: 1.2rem;
-  color: #555;
   cursor: pointer;
-  text-align: left;
-  padding: 6px 0;
+  margin-top: 10px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #000; /* Or your theme color */
 }
 
 .expand-btn:hover {
-   text-decoration: underline;
+  text-decoration: none !important;
+  color: #0000006a;
+  background-color: unset !important;
 }
-
 /* featured post slider 
  * ------------------------------------------------------------------- */
 .featured-grid .entry__content {
@@ -5349,4 +5348,32 @@ body.search-is-visible {
   .about-paragraph {
     font-size: 1.6rem;
   }
+}
+.column {
+  -ms-flex: 1 1 0%;
+  -webkit-box-flex: 1;
+  flex: 1 1 0%;
+  padding: 0 var(--gutter-lg);
+}
+.s-hero__content {
+  height: 100%;
+  -ms-flex-align: center;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 16vh;
+  padding-bottom: 12vh;
+  position: relative;
+}
+article .title {
+  width: 50% !important;
+}
+.brick.entry {
+  /* Existing styles... */
+
+  /* Add this transition if it's missing! */
+  transition: height 0.4s ease-in-out, transform 0.4s ease-in-out;
+
+  /* Ensure overflow is hidden so text doesn't spill out during animation */
+  overflow: hidden;
 }

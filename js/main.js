@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------- */
 
 (function ($) {
-  "use strict";
+  ("use strict");
 
   const cfg = {
     scrollDuration: 800, // smoothscroll duration
@@ -328,49 +328,97 @@
     });
   }; // end ssBackToTop
 
-  document.querySelectorAll(".entry__text").forEach((card) => {
-    const excerpt = card.querySelector(".entry__excerpt p");
-    const btn = card.querySelector(".expand-btn");
+  /* Expand / collapse behaviour for masonry entries
+   * ------------------------------------------------------ */
+  document.querySelectorAll(".brick.entry").forEach((entry) => {
+    const cardText = entry.querySelector(".entry__text");
+    if (!cardText) return;
+    const excerpt = cardText.querySelector(".entry__excerpt p");
+    const btn = cardText.querySelector(".expand-btn");
 
-    // clamp initially
-    excerpt.style.display = "-webkit-box";
-    excerpt.style.webkitLineClamp = "5";
-    excerpt.style.webkitBoxOrient = "vertical";
+    // Helper: Apply line clamp (CSS ellipsis)
+    const applyClamp = (lines = 5) => {
+      excerpt.style.display = "-webkit-box";
+      excerpt.style.webkitBoxOrient = "vertical";
+      excerpt.style.webkitLineClamp = String(lines);
+      excerpt.style.overflow = "hidden";
+    };
 
-    // store the collapsed height
-    const collapsedHeight = card.scrollHeight;
+    // Helper: Remove line clamp (show full text)
+    const removeClamp = () => {
+      excerpt.style.display = "block";
+      excerpt.style.webkitLineClamp = "unset";
+      excerpt.style.overflow = "visible";
+    };
 
-    btn.addEventListener("click", () => {
-      if (!card.classList.contains("expanded")) {
-        // measure expanded height
-        excerpt.style.webkitLineClamp = "unset";
-        const fullHeight = card.scrollHeight;
+    // Initial setup: Clamp text to 5 lines
+    applyClamp(5);
 
-        // collapse back for animation start
-        excerpt.style.webkitLineClamp = "5";
-        card.style.height = card.offsetHeight + "px";
+    // Check if "Read more" button is actually needed
+    // (We compare scrollHeight vs clientHeight to see if text is overflowing)
+    const needsButton = () => {
+      return excerpt.scrollHeight > excerpt.clientHeight;
+    };
 
-        // expand
-        requestAnimationFrame(() => {
-          card.classList.add("expanded");
-          excerpt.style.webkitLineClamp = "unset";
-          card.style.height = fullHeight + "px";
+    if (needsButton()) {
+      btn.style.display = "block";
+      btn.textContent = "Read more…";
+    } else {
+      btn.style.display = "none";
+    }
+
+    // --- CLICK HANDLER ---
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const msnry = window._msnry; // Get the masonry instance
+      const isExpanded = entry.classList.contains("expanded");
+
+      // 1. Freeze the current height (in pixels) to prepare for animation
+      // This prevents the card from jumping instantly.
+      entry.style.height = entry.offsetHeight + "px";
+
+      // 2. Use requestAnimationFrame to ensure the browser registers the frozen height
+      requestAnimationFrame(() => {
+        if (!isExpanded) {
+          // --- EXPANDING ---
+          entry.classList.add("expanded");
+          removeClamp(); // Show all text
           btn.textContent = "Show less";
-        });
-      } else {
-        // collapse back
-        card.style.height = card.offsetHeight + "px";
-
-        requestAnimationFrame(() => {
-          card.classList.remove("expanded");
-          excerpt.style.webkitLineClamp = "5";
-          card.style.height = collapsedHeight + "px";
+        } else {
+          // --- COLLAPSING ---
+          entry.classList.remove("expanded");
+          applyClamp(5); // Hide text again
           btn.textContent = "Read more…";
-        });
-      }
+        }
+
+        // 3. Calculate the new height the card WANTS to be
+        // (We read scrollHeight now that the clamp is changed)
+        const targetHeight = entry.scrollHeight;
+
+        // 4. Set the new height explicitly to trigger CSS transition
+        entry.style.height = targetHeight + "px";
+
+        // 5. CRITICAL: Update Masonry immediately
+        // This tells the grid: "I am changing size, move the other cards NOW."
+        if (msnry) {
+          msnry.layout();
+        }
+      });
+
+      // 6. Cleanup: After animation ends, set height to 'auto'
+      // This ensures the card stays responsive if the window is resized.
+      const onTransitionEnd = (e) => {
+        // Ensure we only react to the height transition of the card itself
+        if (e.target === entry && e.propertyName === "height") {
+          entry.style.height = ""; // Reset to auto
+          entry.removeEventListener("transitionend", onTransitionEnd);
+        }
+      };
+
+      entry.addEventListener("transitionend", onTransitionEnd);
     });
   });
-
   /* Initialize
    * ------------------------------------------------------ */
   (function ssInit() {
